@@ -8,9 +8,9 @@
 **ゲーム開発者(Akashic Engineの利用者)がこのモジュールを直接利用する必要はありません**。
 
 |   提供するクラス   |                        内容                           |             import/require() 元             |
-|:-------------------|:------------------------------------------------------|:--------------------------------------------|
-| MemoryAMFlowClient | tick データをオンメモリに保持する AMFlow 実装         | @akashic/amflow-util/lib/MemoryAMFlowClient
-| ReplayAMFlowProxy  | 与えられた playlog データをそのまま返す AMFlow 実装。<br/>ただし、与えられた範囲外のデータは別の AMFlow インスタンスに問い合わせる| @akashic/amflow-util/lib/ReplayAmflowProxy
+|:---------------------|:------------------------------------------------------|:--------------------------------------------|
+| `MemoryAMFlowClient` | tick データをオンメモリに保持する AMFlow 実装         | `@akashic/amflow-util/lib/MemoryAMFlowClient`
+| `ReplayAMFlowProxy`  | 与えられた playlog データをそのまま返す AMFlow 実装。<br/>ただし、与えられた範囲外のデータは別の AMFlow インスタンスに問い合わせる| `@akashic/amflow-util/lib/ReplayAmflowProxy`
 
 ## インストール
 
