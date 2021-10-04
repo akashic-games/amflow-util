@@ -3,9 +3,9 @@ import * as amf from "@akashic/amflow";
 import * as pl from "@akashic/playlog";
 import { MemoryAmflowClient, _cloneDeep } from "../../lib/MemoryAmflowClient";
 
-describe("MemoryAmflowClient", function () {
+describe("MemoryAmflowClient", () => {
 
-	it("can be instantiated", function () {
+	it("can be instantiated", () => {
 		const self = new MemoryAmflowClient({
 			playId: "testuser",
 		});
@@ -14,7 +14,7 @@ describe("MemoryAmflowClient", function () {
 		expect(self._startPoints).toEqual([]);
 	});
 
-	it("can be instantiated with tickList and startPoints", function () {
+	it("can be instantiated with tickList and startPoints", () => {
 		const self = new MemoryAmflowClient({
 			playId: "testuser",
 			tickList: [0, 10, []],
@@ -24,15 +24,15 @@ describe("MemoryAmflowClient", function () {
 		expect(self._startPoints).toEqual([{ frame: 5, timestamp: 100, data: { seed: 14 } }]);
 	});
 
-	describe("#authenticate()", function () {
+	describe("#authenticate()", () => {
 		const self = new MemoryAmflowClient({
 			playId: "testuser",
 			tickList: [0, 10, []],
 			startPoints: [{ frame: 5, timestamp: 100, data: { seed: 14 } }]
 		});
 
-		it("grants a permission to writeTick for TOKEN_ACTIVE", function (done: Function) {
-			self.authenticate(MemoryAmflowClient.TOKEN_ACTIVE, function (err: Error | null, perm?: amf.Permission) {
+		it("grants a permission to writeTick for TOKEN_ACTIVE", (done: Function) => {
+			self.authenticate(MemoryAmflowClient.TOKEN_ACTIVE, (err: Error | null, perm?: amf.Permission): void => {
 				expect(err).toBe(null);
 				expect(perm?.writeTick).toBe(true);
 				expect(perm?.subscribeTick).toBe(false);
@@ -40,8 +40,8 @@ describe("MemoryAmflowClient", function () {
 			});
 		});
 
-		it("grants a permission to subscribeTick for TOKEN_PASSIVE", function (done: Function) {
-			self.authenticate(MemoryAmflowClient.TOKEN_PASSIVE, function (err: Error | null, perm?: amf.Permission) {
+		it("grants a permission to subscribeTick for TOKEN_PASSIVE", (done: Function) => {
+			self.authenticate(MemoryAmflowClient.TOKEN_PASSIVE, (err: Error | null, perm?: amf.Permission) => {
 				expect(err).toBe(null);
 				expect(perm?.writeTick).toBe(false);
 				expect(perm?.subscribeTick).toBe(true);
@@ -50,10 +50,10 @@ describe("MemoryAmflowClient", function () {
 		});
 	});
 
-	describe("#sendTick", function () {
-		var joinEvent: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId", "dummy-name"];
-		it("push new tick to tickList", function (done: any) {
-			var self = new MemoryAmflowClient({
+	describe("#sendTick", () => {
+		const joinEvent: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId", "dummy-name"];
+		it("push new tick to tickList", (done: any) => {
+			const self = new MemoryAmflowClient({
 				playId: "testuser"
 			});
 
@@ -71,8 +71,8 @@ describe("MemoryAmflowClient", function () {
 			});
 		});
 
-		it("push same tick to tickList", function (done: any) {
-			var self = new MemoryAmflowClient({
+		it("push same tick to tickList", (done: any) => {
+			const self = new MemoryAmflowClient({
 				playId: "testuser",
 			});
 			self.getTickList({ begin: 0, end: 10 }, (err, tickList) => {
@@ -90,7 +90,7 @@ describe("MemoryAmflowClient", function () {
 			});
 		});
 
-		it("clones given ticks", function () {
+		it("clones given ticks", () => {
 			const self = new MemoryAmflowClient({
 				playId: "testuser"
 			});
@@ -104,8 +104,8 @@ describe("MemoryAmflowClient", function () {
 			expect(self._tickList).toEqual([age, age, [[age, [joinEvent]]]]);
 		});
 
-		it("drops transient events from tickList", function (done: any) {
-			var self = new MemoryAmflowClient({
+		it("drops transient events from tickList", (done: any) => {
+			const self = new MemoryAmflowClient({
 				playId: "testuser"
 			});
 			self.sendTick([
@@ -161,9 +161,9 @@ describe("MemoryAmflowClient", function () {
 		});
 	});
 
-	describe("#dropAfter", function () {
-		it("does nothing when dropping after the given tikcs", function () {
-			var self = new MemoryAmflowClient({
+	describe("#dropAfter", () => {
+		it("does nothing when dropping after the given tikcs", () => {
+			const self = new MemoryAmflowClient({
 				playId: "testuser",
 				tickList: [0, 10, []],
 				startPoints: [{ frame: 5, timestamp: 100, data: { seed: 14 } }]
@@ -174,8 +174,8 @@ describe("MemoryAmflowClient", function () {
 			expect(self._startPoints).toEqual([{ frame: 5, timestamp: 100, data: { seed: 14 } }]);
 		});
 
-		it("drop anything when dropping before the given tikcs", function () {
-			var self = new MemoryAmflowClient({
+		it("drop anything when dropping before the given tikcs", () => {
+			const self = new MemoryAmflowClient({
 				playId: "testuser",
 				tickList: [0, 10, []],
 				startPoints: [{ frame: 4, timestamp: 100, data: { bkup: "dummy" } }]
@@ -193,8 +193,8 @@ describe("MemoryAmflowClient", function () {
 			expect(self._startPoints).toEqual([]);
 		});
 
-		it("slices the given tikcs", function () {
-			var self = new MemoryAmflowClient({
+		it("slices the given tikcs", () => {
+			const self = new MemoryAmflowClient({
 				playId: "testuser",
 				tickList: [0, 10, []],
 				startPoints: [
@@ -208,10 +208,10 @@ describe("MemoryAmflowClient", function () {
 			expect(self._startPoints).toEqual([{ frame: 4, timestamp: 100, data: { seed: 14 } }]);
 		});
 
-		it("slices ticks in the middle", function () {
-			var joinEvent: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId", "dummy-name"];
-			var joinEvent2: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId2", "dummy-name2"];
-			var self = new MemoryAmflowClient({
+		it("slices ticks in the middle", () => {
+			const joinEvent: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId", "dummy-name"];
+			const joinEvent2: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId2", "dummy-name2"];
+			const self = new MemoryAmflowClient({
 				playId: "testuser",
 				tickList: [
 					0,
@@ -229,11 +229,11 @@ describe("MemoryAmflowClient", function () {
 
 	});
 
-	describe("#getTickList (deprecated)", function () {
-		it("starts from 0", function (done: any) {
-			var joinEvent: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId", "dummy-name"];
-			var joinEvent2: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId2", "dummy-name2"];
-			var self = new MemoryAmflowClient({
+	describe("#getTickList (deprecated)", () => {
+		it("starts from 0", (done: any) => {
+			const joinEvent: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId", "dummy-name"];
+			const joinEvent2: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId2", "dummy-name2"];
+			const self = new MemoryAmflowClient({
 				playId: "testuser",
 				tickList: [
 					0,
@@ -263,11 +263,11 @@ describe("MemoryAmflowClient", function () {
 			});
 		});
 
-		it("starts from no 0", function (done: any) {
-			var joinEvent: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId", "dummy-name"];
-			var joinEvent2: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId2", "dummy-name2"];
+		it("starts from no 0", (done: any) => {
+			const joinEvent: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId", "dummy-name"];
+			const joinEvent2: pl.JoinEvent = [ pl.EventCode.Join, EventPriority.System, "dummyPlayerId2", "dummy-name2"];
 
-			var self = new MemoryAmflowClient({
+			const self = new MemoryAmflowClient({
 				playId: "testuser",
 				tickList: [
 					5,
@@ -368,9 +368,9 @@ describe("MemoryAmflowClient", function () {
 		});
 	});
 
-	describe("#getStartPoint", function () {
-		it("when empty startPoints", function (done: any) {
-			var self = new MemoryAmflowClient({
+	describe("#getStartPoint", () => {
+		it("when empty startPoints", (done: any) => {
+			const self = new MemoryAmflowClient({
 				playId: "testuser"
 			});
 			self.getStartPoint({}, (err: Error | null, _startPoint?: amf.StartPoint) => {
@@ -379,10 +379,10 @@ describe("MemoryAmflowClient", function () {
 				done();
 			});
 		});
-		it("return putted startPoints", function (done: any) {
-			var sp6 = { frame: 6, timestamp: 600, data: { content: "dataFor6" } };
-			var sp18 = { frame: 18, timestamp: 1800, data: { content: "dataFor18" } };
-			var self = new MemoryAmflowClient({
+		it("return putted startPoints", (done: any) => {
+			const sp6 = { frame: 6, timestamp: 600, data: { content: "dataFor6" } };
+			const sp18 = { frame: 18, timestamp: 1800, data: { content: "dataFor18" } };
+			const self = new MemoryAmflowClient({
 				playId: "testuser"
 			});
 
@@ -408,10 +408,10 @@ describe("MemoryAmflowClient", function () {
 			});
 		});
 
-		it("bypasses the original", function (done: any) {
-			var sp6 = { frame: 6, timestamp: 300, data: { content: "dataFor6" } };
-			var sp18 = { frame: 18, timestamp: 900, data: { content: "dataFor18" } };
-			var self = new MemoryAmflowClient({
+		it("bypasses the original", (done: any) => {
+			const sp6 = { frame: 6, timestamp: 300, data: { content: "dataFor6" } };
+			const sp18 = { frame: 18, timestamp: 900, data: { content: "dataFor18" } };
+			const self = new MemoryAmflowClient({
 				playId: "testuser",
 				tickList: [5, 20],
 				startPoints: [sp6, sp18]
@@ -425,10 +425,10 @@ describe("MemoryAmflowClient", function () {
 			});
 		});
 
-		it("compares the result with the original", function (done: any) {
-			var sp6 = { frame: 6, timestamp: 300, data: { content: "dataFor6" } };
-			var sp18 = { frame: 18, timestamp: 900, data: { content: "dataFor18" } };
-			var self = new MemoryAmflowClient({
+		it("compares the result with the original", (done: any) => {
+			const sp6 = { frame: 6, timestamp: 300, data: { content: "dataFor6" } };
+			const sp18 = { frame: 18, timestamp: 900, data: { content: "dataFor18" } };
+			const self = new MemoryAmflowClient({
 				playId: "testuser",
 				tickList: [5, 20],
 				startPoints: [sp6, sp18]
@@ -442,8 +442,8 @@ describe("MemoryAmflowClient", function () {
 		});
 	});
 
-	describe("#sendEvent", function() {
-		it("clones given events", function () {
+	describe("#sendEvent", () => {
+		it("clones given events", () => {
 			const self = new MemoryAmflowClient({
 				playId: "testuser"
 			});
@@ -457,15 +457,15 @@ describe("MemoryAmflowClient", function () {
 		});
 	});
 
-	describe("#_cloneDeep", function() {
-		it("can copy primitive-value", function () {
+	describe("#_cloneDeep", () => {
+		it("can copy primitive-value", () => {
 			expect(_cloneDeep(1)).toBe(1);
 			expect(_cloneDeep("hoge")).toBe("hoge");
 			expect(_cloneDeep(true)).toBe(true);
 			expect(_cloneDeep(null)).toBe(null);
 			expect(_cloneDeep(undefined)).toBe(undefined);
 		});
-		it("can copy json-data", function () {
+		it("can copy json-data", () => {
 			const array = [1, "hoge", true, null, undefined, [2, "fuga", false, null, undefined]];
 			const arrayClone = _cloneDeep(array);
 			expect(arrayClone).toEqual(array);
@@ -488,7 +488,7 @@ describe("MemoryAmflowClient", function () {
 			expect(jsonClone).toEqual(json);
 			expect(jsonClone).not.toBe(json);
 		});
-		it("can copy event and tick", function () {
+		it("can copy event and tick", () => {
 			const joinEvent: pl.JoinEvent = [pl.EventCode.Join, EventPriority.System, "dummyPlayerId", "dummy-name"];
 			const joinEventClone = _cloneDeep(joinEvent);
 			expect(joinEventClone).toEqual(joinEvent);
