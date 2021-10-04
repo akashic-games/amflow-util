@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/akashic-games/amflow-util/blob/master/img/akashic.png" />
+<img src="https://github.com/akashic-games/amflow-util/blob/main/img/akashic.png" />
 </p>
 
 # amflow-util
