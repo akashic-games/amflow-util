@@ -5,7 +5,7 @@
 # amflow-util
 
 
-このモジュールは、 Akashic Message Flow (AMFlow) のユーティリティモジュールです。
+このモジュールは、 Akashic Message Flow (AMFlow) のユーティリティモジュールで、`MemoryAMFlow`, `ReplayAMFlowProxy` を提供します。
 **ゲーム開発者(Akashic Engineの利用者)がこのモジュールを直接利用する必要はありません**。
 
 ## インストール
@@ -30,7 +30,11 @@ npm run build
 `require()` してください。
 
 ```javascript
-require("@akashic/amflow-util");
+var MemoryAMFlowClient = require("@akashic/amflow-util").MemoryAMFlowClient;
+
+var amflow = new MemoryAMFlowClient({
+   ...
+});
 ```
 
 ## テスト方法
