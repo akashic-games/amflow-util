@@ -1,0 +1,48 @@
+{
+  "name": "@akashic/amflow-util",
+  "version": "1.0.0",
+  "description": "Utility of AMFlow",
+  "main": "index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "prepare": "npm run clean && npm run build",
+    "clean": "rm -rf lib/",
+    "build": "rimraf ./lib && tsc",
+    "lint": "npm run lint:ts && npm run lint:md",
+    "lint:ts": "eslint \"src/**/*.ts\" --fix",
+    "lint:md": "remark ./*.md --frail --no-stdout --quiet --rc-path ./.remarkrc",
+    "test": "npm run build && npm run test:jest && npm run lint",
+    "test:jest": "jest"
+  },
+  "author": "DWANGO Co., Ltd.",
+  "license": "MIT",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akashic-games/amflow-util"
+  },
+  "publishConfig": {
+    "@akashic:registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@akashic/amflow": "~3.1.0",
+    "@akashic/eslint-config": "~0.1.2",
+    "@akashic/playlog": "~3.1.0",
+    "@akashic/remark-preset-lint": "~0.1.1",
+    "@types/jest": "~27.0.2",
+    "@types/node": "~16.10.2",
+    "@typescript-eslint/eslint-plugin": "~4.32.0",
+    "eslint": "~7.32.0",
+    "eslint-plugin-import": "~2.24.2",
+    "eslint-plugin-jest": "~24.5.0",
+    "jest": "~27.2.4",
+    "remark-cli": "~10.0.0",
+    "ts-jest": "^27.0.5",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "@akashic/akashic-engine": "~3.1.2"
+  }
+}

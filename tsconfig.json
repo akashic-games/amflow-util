@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "lib": ["es5"],
+    "declaration": true,
+    "noImplicitAny": true,
+    "strict": true,
+    "module": "commonjs",
+    "outDir": "./lib",
+    "useUnknownInCatchVariables": false
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+	"./src/__tests__/**/*.ts"
+  ]
+}
