@@ -1,5 +1,4 @@
 "use strict";
-import { EventIndex } from "@akashic/akashic-engine";
 import * as amf from "@akashic/amflow";
 import * as pl from "@akashic/playlog";
 
@@ -29,16 +28,16 @@ export class ReplayAmflowProxy implements amf.AMFlow {
 		if (!this._tickList)
 			return;
 
-		const givenFrom = this._tickList[EventIndex.TickList.From];
-		const givenTo = this._tickList[EventIndex.TickList.To];
-		const givenTicksWithEvents = this._tickList[EventIndex.TickList.TicksWithEvents] || [];
+		const givenFrom = this._tickList[pl.TickListIndex.From];
+		const givenTo = this._tickList[pl.TickListIndex.To];
+		const givenTicksWithEvents = this._tickList[pl.TickListIndex.Ticks] || [];
 
 		if (age <= givenFrom) {
 			this._tickList = null;
 			this._startPoints = [];
 		} else if (age <= givenTo) {
-			this._tickList[EventIndex.TickList.To] = age - 1;
-			this._tickList[EventIndex.TickList.TicksWithEvents] = this._sliceTicks(givenTicksWithEvents, givenTo, age - 1);
+			this._tickList[pl.TickListIndex.To] = age - 1;
+			this._tickList[pl.TickListIndex.Ticks] = this._sliceTicks(givenTicksWithEvents, givenTo, age - 1);
 			this._startPoints = this._startPoints.filter((sp) => sp.frame < age);
 		}
 	}
@@ -101,9 +100,9 @@ export class ReplayAmflowProxy implements amf.AMFlow {
 
 		const from = opts.begin;
 		const to = opts.end;
-		const givenFrom = this._tickList[EventIndex.TickList.From];
-		const givenTo = this._tickList[EventIndex.TickList.To];
-		const givenTicksWithEvents = this._tickList[EventIndex.TickList.TicksWithEvents] || [];
+		const givenFrom = this._tickList[pl.TickListIndex.From];
+		const givenTo = this._tickList[pl.TickListIndex.To];
+		const givenTicksWithEvents = this._tickList[pl.TickListIndex.Ticks] || [];
 		const fromInGiven = givenFrom <= from && from <= givenTo;
 		const toInGiven = givenFrom <= to && to <= givenTo;
 
@@ -133,7 +132,7 @@ export class ReplayAmflowProxy implements amf.AMFlow {
 						if (to < givenFrom || givenTo < from) { // 重複なし
 							callback(null, tickList);
 						} else { // 要求範囲が手持ちを包含
-							let ticksWithEvents = tickList[EventIndex.TickList.TicksWithEvents];
+							let ticksWithEvents = tickList[pl.TickListIndex.Ticks];
 							if (ticksWithEvents) {
 								const beforeGiven = this._sliceTicks(ticksWithEvents, from, givenFrom - 1);
 								const afterGiven = this._sliceTicks(ticksWithEvents, givenTo + 1, to);
@@ -145,13 +144,13 @@ export class ReplayAmflowProxy implements amf.AMFlow {
 						}
 					} else if (fromInGiven) { // 前半重複
 						let ticksWithEvents = this._sliceTicks(givenTicksWithEvents, from, to)
-							.concat(tickList[EventIndex.TickList.TicksWithEvents] || []);
-						callback(null, [from, tickList[EventIndex.TickList.To], ticksWithEvents]);
+							.concat(tickList[pl.TickListIndex.Ticks] || []);
+						callback(null, [from, tickList[pl.TickListIndex.To], ticksWithEvents]);
 
 					} else { // 後半重複
-						let ticksWithEvents = (tickList[EventIndex.TickList.TicksWithEvents] || [])
+						let ticksWithEvents = (tickList[pl.TickListIndex.Ticks] || [])
 							.concat(this._sliceTicks(givenTicksWithEvents, from, to));
-						callback(null, [tickList[EventIndex.TickList.From], to, ticksWithEvents]);
+						callback(null, [tickList[pl.TickListIndex.From], to, ticksWithEvents]);
 					}
 				}
 			});
@@ -187,7 +186,7 @@ export class ReplayAmflowProxy implements amf.AMFlow {
 			}
 		}
 
-		const givenTo = this._tickList ? this._tickList[EventIndex.TickList.To] : -1;
+		const givenTo = this._tickList ? this._tickList[pl.TickListIndex.To] : -1;
 		if (typeof opts.frame === "number" && opts.frame > givenTo) {
 			this._amflow.getStartPoint(opts, (err: Error | null, startPoint?: amf.StartPoint) => {
 				if (err) {
@@ -217,7 +216,7 @@ export class ReplayAmflowProxy implements amf.AMFlow {
 
 	_sliceTicks(ticks: pl.Tick[], from: number, to: number): pl.Tick[] {
 		return ticks.filter((t) => {
-			const age = t[EventIndex.Tick.Age];
+			const age = t[pl.TickIndex.Frame];
 			return from <= age && age <= to;
 		});
 	}

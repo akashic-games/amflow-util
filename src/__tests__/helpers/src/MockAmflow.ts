@@ -1,6 +1,13 @@
 import { AMFlow, StartPoint, GetTickListOptions } from "@akashic/amflow";
 import * as pl from "@akashic/playlog";
 
+export const enum EventPriority {
+	Lowest = 0,
+	Unjoined = 1,
+	Joined = 2,
+	System = 3
+}
+
 export interface GetTicksRequest {
 	from: number;
 	to: number;

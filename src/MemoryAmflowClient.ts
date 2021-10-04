@@ -1,5 +1,3 @@
-"use strict";
-import { EventIndex } from "@akashic/akashic-engine";
 import * as amf from "@akashic/amflow";
 import * as pl from "@akashic/playlog";
 
@@ -129,28 +127,28 @@ export class MemoryAmflowClient implements amf.AMFlow {
 		tick = _cloneDeep(tick); // 元の値が後から変更されてもいいようにコピーしておく
 
 		if (!this._tickList) {
-			this._tickList = [tick[EventIndex.Tick.Age], tick[EventIndex.Tick.Age], []];
+			this._tickList = [tick[pl.TickIndex.Frame], tick[pl.TickIndex.Frame], []];
 		} else {
 			// 既に存在するTickListのfrom~to間にtickが挿入されることは無い
 			if (
-				this._tickList[EventIndex.TickList.From] <= tick[EventIndex.Tick.Age] &&
-				tick[EventIndex.Tick.Age] <= this._tickList[EventIndex.TickList.To]
+				this._tickList[pl.TickListIndex.From] <= tick[pl.TickIndex.Frame] &&
+				tick[pl.TickIndex.Frame] <= this._tickList[pl.TickListIndex.To]
 			)
 				throw new Error("illegal age tick");
 
-			this._tickList[EventIndex.TickList.To] = tick[EventIndex.Tick.Age];
+			this._tickList[pl.TickListIndex.To] = tick[pl.TickIndex.Frame];
 		}
 
-		const events = tick[EventIndex.Tick.Events];
-		const storageData = tick[EventIndex.Tick.StorageData];
+		const events = tick[pl.TickIndex.Events];
+		const storageData = tick[pl.TickIndex.StorageData];
 		if (events || storageData) {
 			if (events) {
-				tick[EventIndex.Tick.Events] = events.filter(
-					event => !(event[EventIndex.General.EventFlags] & pl.EventFlagsMask.Transient)
+				tick[pl.TickIndex.Events] = events.filter(
+					event => !(event[pl.EventIndex.EventFlags] & pl.EventFlagsMask.Transient)
 				);
 			}
 			// @ts-ignore
-			this._tickList[EventIndex.TickList.TicksWithEvents].push(tick);
+			this._tickList[pl.TickListIndex.Ticks].push(tick);
 		}
 
 		this._tickHandlers.forEach((h: (t: pl.Tick) => void) => h(tick));
@@ -217,11 +215,11 @@ export class MemoryAmflowClient implements amf.AMFlow {
 			return;
 		}
 
-		const from = Math.max(opts.begin, this._tickList[EventIndex.TickList.From]);
-		const to = Math.min(opts.end, this._tickList[EventIndex.TickList.To]);
+		const from = Math.max(opts.begin, this._tickList[pl.TickListIndex.From]);
+		const to = Math.min(opts.end, this._tickList[pl.TickListIndex.To]);
 		// @ts-ignore
-		const ticks = this._tickList[EventIndex.TickList.TicksWithEvents].filter((tick) => {
-			const age = tick[EventIndex.Tick.Age];
+		const ticks = this._tickList[pl.TickListIndex.Ticks].filter((tick) => {
+			const age = tick[pl.TickIndex.Frame];
 			return from <= age && age <= to;
 		});
 		const tickList: pl.TickList = [from, to, ticks];
@@ -291,17 +289,17 @@ export class MemoryAmflowClient implements amf.AMFlow {
 	 */
 	dropAfter(age: number): void {
 		if (!this._tickList) return;
-		const from = this._tickList[EventIndex.TickList.From];
-		const to = this._tickList[EventIndex.TickList.To];
+		const from = this._tickList[pl.TickListIndex.From];
+		const to = this._tickList[pl.TickListIndex.To];
 
 		if (age <= from) {
 			this._tickList = null;
 			this._startPoints = [];
 		} else if (age <= to) {
-			this._tickList[EventIndex.TickList.To] = age - 1;
+			this._tickList[pl.TickListIndex.To] = age - 1;
 			// @ts-ignore
-			this._tickList[EventIndex.TickList.TicksWithEvents] = this._tickList[EventIndex.TickList.TicksWithEvents].filter((tick) => {
-				const ta = tick[EventIndex.Tick.Age];
+			this._tickList[pl.TickListIndex.Ticks] = this._tickList[pl.TickListIndex.Ticks].filter((tick) => {
+				const ta = tick[pl.TickIndex.Frame];
 				return from <= ta && ta <= (age - 1);
 			});
 			this._startPoints = this._startPoints.filter((sp) => sp.frame < age);

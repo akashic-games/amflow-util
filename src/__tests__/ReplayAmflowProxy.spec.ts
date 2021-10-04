@@ -1,8 +1,7 @@
-import { EventPriority } from "@akashic/akashic-engine";
 import * as amf from "@akashic/amflow";
 import * as pl from "@akashic/playlog";
 import { ReplayAmflowProxy } from "../../lib/ReplayAmflowProxy";
-import { MockAmflow } from "./helpers/src/MockAmflow";
+import { EventPriority, MockAmflow } from "./helpers/src/MockAmflow";
 
 describe("ReplayAmflowProxy", () => {
 	it("can be instantiated", () => {
