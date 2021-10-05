@@ -7,10 +7,12 @@
 このモジュールは、[Akashic Message Flow (AMFlow)](https://github.com/akashic-games/amflow) のユーティリティモジュールで以下を提供します。
 **ゲーム開発者(Akashic Engineの利用者)がこのモジュールを直接利用する必要はありません**。
 
-|   提供するクラス   |                        内容                           |             import/require() 元             |
-|:---------------------|:------------------------------------------------------|:--------------------------------------------|
-| `MemoryAMFlowClient` | tick データをオンメモリに保持する AMFlow 実装         | `@akashic/amflow-util/lib/MemoryAMFlowClient`
-| `ReplayAMFlowProxy`  | 与えられた playlog データをそのまま返す AMFlow 実装。<br/>ただし、与えられた範囲外のデータは別の AMFlow インスタンスに問い合わせる| `@akashic/amflow-util/lib/ReplayAmflowProxy`
+|    提供するクラス    |                        内容                           |               import/require() 元             |
+|:---------------------|:------------------------------------------------------|:----------------------------------------------|
+| `MemoryAMFlowClient` | tick データをオンメモリに保持する AMFlow 実装         | `@akashic/amflow-util/lib/MemoryAMFlowClient` |
+| `ReplayAMFlowProxy`  | 与えられた playlog データをそのまま返す AMFlow 実装。<br/>ただし、与えられた範囲外のデータは別の AMFlow インスタンスに問い合わせる| `@akashic/amflow-util/lib/ReplayAmflowProxy` |
+
+このモジュールは利用が限られるため、root からの import/require はできませんので個別に import/require する必要があります。
 
 ## インストール
 
