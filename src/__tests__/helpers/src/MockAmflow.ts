@@ -16,6 +16,7 @@ export interface GetTicksRequest {
 
 export class MockAmflow implements AMFlow {
 	ticks: pl.Tick[];
+	logs: string[];
 
 	tickHandlers: ((tick: pl.Tick) => void)[];
 	eventHandlers: ((ev: pl.Event) => void)[];
@@ -27,6 +28,7 @@ export class MockAmflow implements AMFlow {
 
 	constructor() {
 		this.ticks = [];
+		this.logs = [];
 		this.tickHandlers = [];
 		this.eventHandlers = [];
 		this.requestsGetTicks = [];
@@ -39,8 +41,11 @@ export class MockAmflow implements AMFlow {
 		return this.eventHandlers.indexOf(h) !== -1;
 	}
 
-	open(_playId: string, callback?: (error: Error | null) => void): void {
+	open(playId: string, callback?: (error: Error | null) => void): void {
 		if (callback) setTimeout(() => {
+			if (isNaN(Number.parseInt(playId, 10))) {
+				return callback(new Error("open-error"));
+			}
 			callback(null);
 		}, 0);
 	}
@@ -51,33 +56,37 @@ export class MockAmflow implements AMFlow {
 		}, 0);
 	}
 
-	authenticate(_token: string, callback: (error: Error | null, permission: any) => void): void {
+	authenticate(token: string, callback: (error: Error | null, permission?: any) => void): void {
 		setTimeout(() => {
+			if (isNaN(Number.parseInt(token, 10))) {
+				return callback(new Error("authenticate-error"));
+			}
+
 			callback(null, {
 				writeTick: true,
 				readTick: true,
 				subscribeTick: true,
 				subscribeEvent: true,
 				sendEvent: true,
-				maxEventPrioryt: 0
+				maxEventPriority: 0
 			});
 		}, 0);
 	}
 
-	sendTick(_tick: pl.Tick): void {
-		// do nothing
+	sendTick(tick: pl.Tick): void {
+		this.logs.push(JSON.stringify(tick));
 	}
 
 	onTick(handler: (tick: pl.Tick) => void): void {
 		this.tickHandlers.push(handler);
 	}
+
 	offTick(handler: (tick: pl.Tick) => void): void {
-		this.tickHandlers = this.tickHandlers.filter((h) => {
-			return h !== handler;
-		});
+		this.tickHandlers = this.tickHandlers.filter(h => h !== handler);
 	}
 
 	sendEvent(event: pl.Event): void {
+		this.logs.push(JSON.stringify(event));
 		this.eventHandlers.forEach((h: (pev: pl.Event) => void) => {
 			h(event);
 		});
@@ -86,10 +95,9 @@ export class MockAmflow implements AMFlow {
 	onEvent(handler: (event: pl.Event) => void): void {
 		this.eventHandlers.push(handler);
 	}
+
 	offEvent(handler: (event: pl.Event) => void): void {
-		this.eventHandlers = this.eventHandlers.filter((h) => {
-			return h !== handler;
-		});
+		this.eventHandlers = this.eventHandlers.filter(h => h !== handler);
 	}
 
 	getTickList(
@@ -113,6 +121,7 @@ export class MockAmflow implements AMFlow {
 			opts = optsOrBegin;
 			callback = endOrCallback as (error: Error | null, tickList?: pl.TickList) => void;
 		}
+		this.logs.push(`${opts.begin},${opts.end}`);
 
 		let req: GetTicksRequest;
 		const wrap = (error: Error | null, tickArray?: pl.Tick[] | null): void => {
@@ -123,47 +132,96 @@ export class MockAmflow implements AMFlow {
 				callback(null, undefined);
 				return;
 			}
-			var ret: pl.TickList = [
+			const ret: pl.TickList = [
 				tickArray[0][0],
 				tickArray[tickArray.length - 1][0],
 				tickArray.filter((t: pl.Tick) => !!(t[1] || t[2]))
 			];
 			callback(error, ret);
 		};
-		req = { from: opts.begin, to: opts.end, respond: wrap };
-		this.requestsGetTicks.push(req);
+
+		if (opts.begin >= 100) {
+			// begin が 100 以上なら callback を呼ぶ
+			this.logs.push(`${opts.begin},${opts.end}`);
+			if (opts.begin >= 200) {
+				setTimeout(() => callback(new Error("getTickList-error")), 0);
+			} else {
+				const tickList: pl.TickList = [opts.begin, opts.end, []];
+				setTimeout(() =>  callback(null, tickList), 0);
+			}
+		} else {
+			req = { from: opts.begin, to: opts.end, respond: wrap };
+			this.requestsGetTicks.push(req);
+		}
 	}
 
-	putStartPoint(_startPoint: StartPoint, _callback: (error: Error | null) => void): void {
-		// do nothing
-	}
-	getStartPoint(_opts: { frame?: number }, callback: (error: Error | null, startPoint?: StartPoint) => void): void {
+	putStartPoint(startPoint: StartPoint, callback: (error: Error | null) => void): void {
+		this.logs.push(JSON.stringify(startPoint));
 		setTimeout(() => {
-			callback(null, { frame: 0, timestamp: 0, data: { seed: 0 } });
+			callback(startPoint.frame !== 0 ? new Error("putStartPoint-error") : null);
+		}, 0);
+	}
+
+	getStartPoint(opts: { frame?: number }, callback: (error: Error | null, startPoint?: StartPoint) => void): void {
+		this.logs.push("getStartPoint");
+		setTimeout(() => {
+			if (opts.frame && opts.frame >= 100) {
+				callback(new Error("getStartPoint-error"));
+			} else {
+				callback(null, { frame: 0, timestamp: 0, data: { seed: 0 } });
+			}
 		}, 0);
 	}
 
 	// StorageReadKeyはregionKeyしか見ない + StorageValueは一つしか持たない簡易実装なので注意
 	putStorageData(key: pl.StorageKey, value: pl.StorageValue, _options: any, callback: (err: Error | null) => void): void {
-		var wrap = (err?: any): void => {
-			this.requestsPutStorageData = this.requestsPutStorageData.filter((r: any) => {
-				return r !== wrap;
-			});
-			this.storage[key.regionKey] = value;
-			callback(err);
-		};
-		this.requestsPutStorageData.push(wrap);
+		this.logs.push("putStorageData");
+		if (key.regionKey === "callback") {
+			// callback を呼ぶ
+			if (key.region === 0) {
+				callback(null);
+			} else {
+				callback(new Error("putStorageData-error"));
+			}
+		} else {
+			const wrap = (err?: any): void => {
+				this.requestsPutStorageData = this.requestsPutStorageData.filter((r: any) => {
+					return r !== wrap;
+				});
+				this.storage[key.regionKey] = value;
+				callback(err);
+			};
+			this.requestsPutStorageData.push(wrap);
+		}
 	}
 	getStorageData(keys: pl.StorageReadKey[], callback: (error: Error | null, values?: pl.StorageData[]) => void): void {
-		var wrap = (err?: any): void => {
-			this.requestsGetStorageData = this.requestsGetStorageData.filter((r: any) => {
-				return r !== wrap;
-			});
-			var data = keys.map((k: pl.StorageReadKey) => {
-				return { readKey: k, values: [this.storage[k.regionKey]] };
-			});
-			callback(err, data);
-		};
-		this.requestsGetStorageData.push(wrap);
+		this.logs.push("getStorageData");
+		if (keys[0].regionKey === "callback") {
+			if (keys[0].region === 0) {
+				const data: pl.StorageData[] = [{
+					readKey: {
+						region: 0,
+						regionKey: "callback"
+					},
+					values: [{
+						data: 1
+					}]
+				}];
+				callback(null, data);
+			} else {
+				callback(new Error("getStorageData-error"));
+			}
+		} else {
+			const wrap = (err?: any): void => {
+				this.requestsGetStorageData = this.requestsGetStorageData.filter((r: any) => {
+					return r !== wrap;
+				});
+				const data = keys.map((k: pl.StorageReadKey) => {
+					return { readKey: k, values: [this.storage[k.regionKey]] };
+				});
+				callback(err, data);
+			};
+			this.requestsGetStorageData.push(wrap);
+		}
 	}
 }
