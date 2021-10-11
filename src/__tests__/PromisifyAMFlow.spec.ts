@@ -22,8 +22,8 @@ describe("PromisifyAMFlow", () => {
 		expect(promisifiedAMFlow.sendEvent).toBeDefined();
 	});
 
-	it("Function open ", async () => {
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((new MockAmflow()));
+	it("Function open", async () => {
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAmflow());
 		let cnt = 0;
 		const calledFunc = (): void => void cnt++;
 
@@ -32,15 +32,15 @@ describe("PromisifyAMFlow", () => {
 		expect(cnt).toBe(1);
 
 		let errMsg = "";
-		await promisifiedAMFlow.open("testId") // 引数が数値にパースできなければモックでエラーとしている
+		await promisifiedAMFlow.open(MockAmflow.INVALID_PLAYID)
 			.then(() => calledFunc())
 			.catch ((e) => errMsg = e.message);
 		expect(cnt).toBe(1);
 		expect(errMsg).toBe("open-error");
 	});
 
-	it("Function close ", async () => {
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((new MockAmflow()));
+	it("Function close", async () => {
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAmflow());
 		let cnt = 0;
 		const calledFunc = (): void => void cnt++;
 
@@ -52,8 +52,8 @@ describe("PromisifyAMFlow", () => {
 		expect(errMsg).toBe("");
 	});
 
-	it("Function authenticate ", async () => {
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((new MockAmflow()));
+	it("Function authenticate", async () => {
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAmflow());
 		let permission;
 
 		await promisifiedAMFlow.authenticate("0")
@@ -69,14 +69,14 @@ describe("PromisifyAMFlow", () => {
 		});
 
 		let errMsg = "";
-		await promisifiedAMFlow.authenticate("token") // 引数が数値にパースできなければモックでエラーとしている
+		await promisifiedAMFlow.authenticate(MockAmflow.INVALID_TOKEN)
 			.catch((e) => errMsg = e.message);
 		expect(errMsg).toBe("authenticate-error");
 	});
 
-	it("Function sendTick ", () => {
+	it("Function sendTick", () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		const tick: pl.Tick = [1, [[32, 0, "foo", {}]]];
 		promisifiedAMFlow.sendTick(tick);
@@ -84,9 +84,9 @@ describe("PromisifyAMFlow", () => {
 		expect(mockAmflow.logs[0]).toBe(JSON.stringify(tick));
 	});
 
-	it("Function onTick and offTick ", () => {
+	it("Function onTick and offTick", () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		const tickHandler = (_tick: pl.Tick): void => {};
@@ -100,7 +100,7 @@ describe("PromisifyAMFlow", () => {
 
 	it("Function sendEvent", () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		const event: pl.Event = [32, 0, "zoo", { some: "data" }];
 		promisifiedAMFlow.sendEvent(event);
@@ -108,9 +108,9 @@ describe("PromisifyAMFlow", () => {
 		expect(mockAmflow.logs[0]).toBe(JSON.stringify(event));
 	});
 
-	it("Function onEvent and offEvent ", () => {
+	it("Function onEvent and offEvent", () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		const eventHandler = (_event: pl.Event): void => {};
@@ -122,27 +122,27 @@ describe("PromisifyAMFlow", () => {
 		expect(mockAmflow.eventHandlers.length).toBe(0);
 	});
 
-	it("Function getTickList ", async () => {
+	it("Function getTickList", async () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		let result;
-		const opts = {begin: 100, end: 110};
+		const opts = { begin: MockAmflow.BEGIN_VALUE_CALLS_CALLBACK_OF_GETTICKLIST, end: 110};
 		await promisifiedAMFlow.getTickList(opts)
 			.then((tick) => result = tick);
 
-		expect(result).toEqual([100, 110, []]);
+		expect(result).toEqual([MockAmflow.BEGIN_VALUE_CALLS_CALLBACK_OF_GETTICKLIST, 110, []]);
 		expect(mockAmflow.logs[0]).toBe(`${opts.begin},${opts.end}`);
 
 		let errMsg = "";
-		await promisifiedAMFlow.getTickList({begin: 200, end: 250}) // 引数 begin が200以上ならモックでエラーとしている
+		await promisifiedAMFlow.getTickList({ begin: MockAmflow.INVALID_BEGIN_OF_GETTICKLIST, end: 250})
 			.catch((e) => errMsg = e.message);
 		expect(errMsg).toBe("getTickList-error");
 	});
 
 	it("Function getTickList (deprecated)", async () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		let result;
 		await promisifiedAMFlow.getTickList(100, 110)
@@ -151,14 +151,14 @@ describe("PromisifyAMFlow", () => {
 		expect(mockAmflow.logs[0]).toBe("100,110");
 
 		let errMsg = "";
-		await promisifiedAMFlow.getTickList(211, 215) // 引数 begin が200以上ならモックでエラーとしている
+		await promisifiedAMFlow.getTickList(MockAmflow.INVALID_BEGIN_OF_GETTICKLIST, 215)
 			.catch((e) => errMsg = e.message);
 		expect(errMsg).toBe("getTickList-error");
 	});
 
-	it("Function putStartPoint ", async () => {
+	it("Function putStartPoint", async () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 		let cnt = 0;
 		const calledFunc = (): void => void cnt++;
 
@@ -176,9 +176,9 @@ describe("PromisifyAMFlow", () => {
 		expect(errMsg).toBe("putStartPoint-error");
 	});
 
-	it("Function getStartPoint ", async () => {
+	it("Function getStartPoint", async () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		let result;
 		await promisifiedAMFlow.getStartPoint({frame: 0})
@@ -193,14 +193,14 @@ describe("PromisifyAMFlow", () => {
 		expect(errMsg).toBe("getStartPoint-error");
 	});
 
-	it("Function putStorageData ", async () => {
+	it("Function putStorageData", async () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 		let cnt = 0;
 		// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 		const calledFunc = () => cnt++;
 
-		const key = { region: 0, regionKey: "callback"};
+		const key = { region: 0, regionKey: MockAmflow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA};
 		const value =  { data: "value"};
 		await promisifiedAMFlow.putStorageData(key, value, {})
 			.then(() => calledFunc());
@@ -208,7 +208,7 @@ describe("PromisifyAMFlow", () => {
 		expect(mockAmflow.logs[0]).toBe("putStorageData");
 
 		let errMsg = "";
-		key.region = 1; // region が 0 以外ならモックでエラーとしている
+		key.region = MockAmflow.INVALID_REGION_VALUE_OF_STORAGEDATA;
 		await promisifiedAMFlow.putStorageData(key, value, {})
 			.then(() => calledFunc())
 			.catch((e) => errMsg = e.message);
@@ -216,20 +216,23 @@ describe("PromisifyAMFlow", () => {
 		expect(errMsg).toBe("putStorageData-error");
 	});
 
-	it("Function getStorageData ", async () => {
+	it("Function getStorageData", async () => {
 		const mockAmflow = new MockAmflow();
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy((mockAmflow));
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		let result;
-		const key = { region: 0, regionKey: "callback" };
+		const key = { region: 0, regionKey: MockAmflow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA };
 		await promisifiedAMFlow.getStorageData( [key])
 			.then((value: pl.StorageData[] | undefined) => result = value);
 
 		expect(mockAmflow.logs[0]).toBe("getStorageData");
-		expect(result).toEqual([{ readKey: { region: 0, regionKey: "callback"}, values: [{data: 1}]}]);
+		expect(result).toEqual([{
+			 readKey: { region: 0, regionKey: MockAmflow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA},
+			 values: [{data: 1}]}
+		]);
 
 		let errMsg = "";
-		key.region = 1; // region が 0 以外ならモックでエラーとしている
+		key.region = MockAmflow.INVALID_REGION_VALUE_OF_STORAGEDATA;
 		await promisifiedAMFlow.getStorageData([key])
 			.catch((e) => errMsg = e.message);
 		expect(errMsg).toBe("getStorageData-error");
