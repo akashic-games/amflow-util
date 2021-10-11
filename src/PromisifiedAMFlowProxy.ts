@@ -34,24 +34,18 @@ export class PromisifiedAMFlowProxy implements PromisifiedAMFlow {
 		optsOrBegin: number | GetTickListOptions,
 		endOrUndefined?: number
 	): Promise<playlog.TickList | undefined> {
-		let opts: GetTickListOptions;
 		if (typeof optsOrBegin === "number") {
 			// NOTE: optsOrBegin === "number" であれば必ず amflow@2 以前の引数だとみなしてキャストし、2 系の引数形で呼び出す
-			opts = {
-				begin: optsOrBegin,
-				end: endOrUndefined as number
-			};
+			const end = endOrUndefined as number;
 			return new Promise((resolve, reject) => {
-				this._amflow.getTickList(opts.begin, opts.end, (err, tl?) => (err ? reject(err) : resolve(tl)));
+				this._amflow.getTickList(optsOrBegin, end, (err, tl?) => (err ? reject(err) : resolve(tl)));
 			});
 		} else {
 			// NOTE: optsOrBegin !== "number" であれば必ず amflow@3 以降の引数だとみなす
-			opts = optsOrBegin;
+			return new Promise((resolve, reject) => {
+				this._amflow.getTickList(optsOrBegin, (err, tl?) => (err ? reject(err) : resolve(tl)));
+			});
 		}
-
-		return new Promise((resolve, reject) => {
-			this._amflow.getTickList(opts, (err, tl?) => (err ? reject(err) : resolve(tl)));
-		});
 	}
 
 
@@ -75,7 +69,7 @@ export class PromisifiedAMFlowProxy implements PromisifiedAMFlow {
 
 	getStorageData(keys: playlog.StorageReadKey[]): Promise<playlog.StorageData[] | undefined> {
 		return new Promise((resolve, reject) => {
-			this._amflow.getStorageData(keys, (err, values?: playlog.StorageData[]) =>
+			this._amflow.getStorageData(keys, (err, values?) =>
 				(err ? reject(err) : resolve(values)));
 		});
 	}
