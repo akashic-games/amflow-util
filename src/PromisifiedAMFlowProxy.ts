@@ -2,6 +2,9 @@ import { AMFlow, GetStartPointOptions, GetTickListOptions, Permission, StartPoin
 import * as playlog from "@akashic/playlog";
 import { PromisifiedAMFlow } from "./PromisifiedAMFlow";
 
+/**
+ * 引数に渡された AMFlow 実装の非同期関数を Promise でラップしたクラス
+ */
 export class PromisifiedAMFlowProxy implements PromisifiedAMFlow {
 	_amflow: AMFlow;
 
