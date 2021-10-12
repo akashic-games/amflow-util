@@ -36,14 +36,16 @@ export class PromisifiedAMFlowProxy implements PromisifiedAMFlow {
 	): Promise<playlog.TickList | undefined> {
 		if (typeof optsOrBegin === "number") {
 			// NOTE: optsOrBegin === "number" であれば必ず amflow@2 以前の引数だとみなしてキャストし、2 系の引数形で呼び出す
+			const begin = optsOrBegin;
 			const end = endOrUndefined as number;
 			return new Promise((resolve, reject) => {
-				this._amflow.getTickList(optsOrBegin, end, (err, tl?) => (err ? reject(err) : resolve(tl)));
+				this._amflow.getTickList(begin, end, (err, tl?) => (err ? reject(err) : resolve(tl)));
 			});
 		} else {
 			// NOTE: optsOrBegin !== "number" であれば必ず amflow@3 以降の引数だとみなす
+			const opts = optsOrBegin;
 			return new Promise((resolve, reject) => {
-				this._amflow.getTickList(optsOrBegin, (err, tl?) => (err ? reject(err) : resolve(tl)));
+				this._amflow.getTickList(opts, (err, tl?) => (err ? reject(err) : resolve(tl)));
 			});
 		}
 	}
