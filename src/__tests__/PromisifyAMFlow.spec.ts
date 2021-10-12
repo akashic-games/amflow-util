@@ -1,10 +1,10 @@
 import * as pl from "@akashic/playlog";
 import { PromisifiedAMFlowProxy } from "../../lib/PromisifiedAMFlowProxy";
-import { MockAmflow } from "./helpers/src/MockAmflow";
+import { MockAMFlow } from "./helpers/src/MockAMFlow";
 
 describe("PromisifyAMFlow", () => {
 	it("promisifyAMFlow", () => {
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAmflow());
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAMFlow());
 
 		expect(promisifiedAMFlow.open).toBeDefined();
 		expect(promisifiedAMFlow.close).toBeDefined();
@@ -23,7 +23,7 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function open", async () => {
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAmflow());
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAMFlow());
 		let cnt = 0;
 		const calledFunc = (): void => void cnt++;
 
@@ -32,7 +32,7 @@ describe("PromisifyAMFlow", () => {
 		expect(cnt).toBe(1);
 
 		let errMsg = "";
-		await promisifiedAMFlow.open(MockAmflow.INVALID_PLAYID)
+		await promisifiedAMFlow.open(MockAMFlow.INVALID_PLAYID)
 			.then(() => calledFunc())
 			.catch ((e) => errMsg = e.message);
 		expect(cnt).toBe(1);
@@ -40,7 +40,7 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function close", async () => {
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAmflow());
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAMFlow());
 		let cnt = 0;
 		const calledFunc = (): void => void cnt++;
 
@@ -53,7 +53,7 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function authenticate", async () => {
-		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAmflow());
+		const promisifiedAMFlow = new PromisifiedAMFlowProxy(new MockAMFlow());
 		let permission;
 
 		await promisifiedAMFlow.authenticate("0")
@@ -69,13 +69,13 @@ describe("PromisifyAMFlow", () => {
 		});
 
 		let errMsg = "";
-		await promisifiedAMFlow.authenticate(MockAmflow.INVALID_TOKEN)
+		await promisifiedAMFlow.authenticate(MockAMFlow.INVALID_TOKEN)
 			.catch((e) => errMsg = e.message);
 		expect(errMsg).toBe("authenticate-error");
 	});
 
 	it("Function sendTick", () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		const tick: pl.Tick = [1, [[32, 0, "foo", {}]]];
@@ -85,7 +85,7 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function onTick and offTick", () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -99,7 +99,7 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function sendEvent", () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		const event: pl.Event = [32, 0, "zoo", { some: "data" }];
@@ -109,7 +109,7 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function onEvent and offEvent", () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -123,25 +123,25 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function getTickList", async () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		let result;
-		const opts = { begin: MockAmflow.BEGIN_VALUE_CALLS_CALLBACK_OF_GETTICKLIST, end: 110};
+		const opts = { begin: MockAMFlow.BEGIN_VALUE_CALLS_CALLBACK_OF_GETTICKLIST, end: 110};
 		await promisifiedAMFlow.getTickList(opts)
 			.then((tick) => result = tick);
 
-		expect(result).toEqual([MockAmflow.BEGIN_VALUE_CALLS_CALLBACK_OF_GETTICKLIST, 110, []]);
+		expect(result).toEqual([MockAMFlow.BEGIN_VALUE_CALLS_CALLBACK_OF_GETTICKLIST, 110, []]);
 		expect(mockAmflow.logs[0]).toBe(`${opts.begin},${opts.end}`);
 
 		let errMsg = "";
-		await promisifiedAMFlow.getTickList({ begin: MockAmflow.INVALID_BEGIN_OF_GETTICKLIST, end: 250})
+		await promisifiedAMFlow.getTickList({ begin: MockAMFlow.INVALID_BEGIN_OF_GETTICKLIST, end: 250})
 			.catch((e) => errMsg = e.message);
 		expect(errMsg).toBe("getTickList-error");
 	});
 
 	it("Function getTickList (deprecated)", async () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		let result;
@@ -151,13 +151,13 @@ describe("PromisifyAMFlow", () => {
 		expect(mockAmflow.logs[0]).toBe("100,110");
 
 		let errMsg = "";
-		await promisifiedAMFlow.getTickList(MockAmflow.INVALID_BEGIN_OF_GETTICKLIST, 215)
+		await promisifiedAMFlow.getTickList(MockAMFlow.INVALID_BEGIN_OF_GETTICKLIST, 215)
 			.catch((e) => errMsg = e.message);
 		expect(errMsg).toBe("getTickList-error");
 	});
 
 	it("Function putStartPoint", async () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 		let cnt = 0;
 		const calledFunc = (): void => void cnt++;
@@ -177,7 +177,7 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function getStartPoint", async () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		let result;
@@ -194,13 +194,13 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function putStorageData", async () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 		let cnt = 0;
 		// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 		const calledFunc = () => cnt++;
 
-		const key = { region: 0, regionKey: MockAmflow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA};
+		const key = { region: 0, regionKey: MockAMFlow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA};
 		const value =  { data: "value"};
 		await promisifiedAMFlow.putStorageData(key, value, {})
 			.then(() => calledFunc());
@@ -208,7 +208,7 @@ describe("PromisifyAMFlow", () => {
 		expect(mockAmflow.logs[0]).toBe("putStorageData");
 
 		let errMsg = "";
-		key.region = MockAmflow.INVALID_REGION_VALUE_OF_STORAGEDATA;
+		key.region = MockAMFlow.INVALID_REGION_VALUE_OF_STORAGEDATA;
 		await promisifiedAMFlow.putStorageData(key, value, {})
 			.then(() => calledFunc())
 			.catch((e) => errMsg = e.message);
@@ -217,22 +217,22 @@ describe("PromisifyAMFlow", () => {
 	});
 
 	it("Function getStorageData", async () => {
-		const mockAmflow = new MockAmflow();
+		const mockAmflow = new MockAMFlow();
 		const promisifiedAMFlow = new PromisifiedAMFlowProxy(mockAmflow);
 
 		let result;
-		const key = { region: 0, regionKey: MockAmflow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA };
+		const key = { region: 0, regionKey: MockAMFlow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA };
 		await promisifiedAMFlow.getStorageData( [key])
 			.then((value: pl.StorageData[] | undefined) => result = value);
 
 		expect(mockAmflow.logs[0]).toBe("getStorageData");
 		expect(result).toEqual([{
-			 readKey: { region: 0, regionKey: MockAmflow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA},
+			readKey: { region: 0, regionKey: MockAMFlow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA},
 			 values: [{data: 1}]}
 		]);
 
 		let errMsg = "";
-		key.region = MockAmflow.INVALID_REGION_VALUE_OF_STORAGEDATA;
+		key.region = MockAMFlow.INVALID_REGION_VALUE_OF_STORAGEDATA;
 		await promisifiedAMFlow.getStorageData([key])
 			.catch((e) => errMsg = e.message);
 		expect(errMsg).toBe("getStorageData-error");

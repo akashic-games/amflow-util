@@ -14,7 +14,7 @@ export interface GetTicksRequest {
 	respond: (error: Error | null, ticks?: pl.Tick[] | null) => void;
 }
 
-export class MockAmflow implements AMFlow {
+export class MockAMFlow implements AMFlow {
 	static INVALID_PLAYID: string = "invalid-playId";
 	static INVALID_TOKEN: string = "invalid-token";
 	static INVALID_BEGIN_OF_GETTICKLIST: number = 200;
@@ -50,7 +50,7 @@ export class MockAmflow implements AMFlow {
 
 	open(playId: string, callback?: (error: Error | null) => void): void {
 		if (callback) setTimeout(() => {
-			if (playId === MockAmflow.INVALID_PLAYID ) {
+			if (playId === MockAMFlow.INVALID_PLAYID ) {
 				return callback(new Error("open-error"));
 			}
 			callback(null);
@@ -65,7 +65,7 @@ export class MockAmflow implements AMFlow {
 
 	authenticate(token: string, callback: (error: Error | null, permission?: any) => void): void {
 		setTimeout(() => {
-			if (token === MockAmflow.INVALID_TOKEN) {
+			if (token === MockAMFlow.INVALID_TOKEN) {
 				return callback(new Error("authenticate-error"));
 			}
 
@@ -147,9 +147,9 @@ export class MockAmflow implements AMFlow {
 			callback(error, ret);
 		};
 
-		if (opts.begin >= MockAmflow.BEGIN_VALUE_CALLS_CALLBACK_OF_GETTICKLIST) {
+		if (opts.begin >= MockAMFlow.BEGIN_VALUE_CALLS_CALLBACK_OF_GETTICKLIST) {
 			this.logs.push(`${opts.begin},${opts.end}`);
-			if (opts.begin === MockAmflow.INVALID_BEGIN_OF_GETTICKLIST) {
+			if (opts.begin === MockAMFlow.INVALID_BEGIN_OF_GETTICKLIST) {
 				setTimeout(() => callback(new Error("getTickList-error")), 0);
 			} else {
 				const tickList: pl.TickList = [opts.begin, opts.end, []];
@@ -182,8 +182,8 @@ export class MockAmflow implements AMFlow {
 	// StorageReadKeyはregionKeyしか見ない + StorageValueは一つしか持たない簡易実装なので注意
 	putStorageData(key: pl.StorageKey, value: pl.StorageValue, _options: any, callback: (err: Error | null) => void): void {
 		this.logs.push("putStorageData");
-		if (key.regionKey === MockAmflow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA) {
-			if (key.region === MockAmflow.INVALID_REGION_VALUE_OF_STORAGEDATA) {
+		if (key.regionKey === MockAMFlow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA) {
+			if (key.region === MockAMFlow.INVALID_REGION_VALUE_OF_STORAGEDATA) {
 				callback(new Error("putStorageData-error"));
 			} else {
 				callback(null);
@@ -201,8 +201,8 @@ export class MockAmflow implements AMFlow {
 	}
 	getStorageData(keys: pl.StorageReadKey[], callback: (error: Error | null, values?: pl.StorageData[]) => void): void {
 		this.logs.push("getStorageData");
-		if (keys[0].regionKey === MockAmflow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA) {
-			if (keys[0].region === MockAmflow.INVALID_REGION_VALUE_OF_STORAGEDATA) {
+		if (keys[0].regionKey === MockAMFlow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA) {
+			if (keys[0].region === MockAMFlow.INVALID_REGION_VALUE_OF_STORAGEDATA) {
 				callback(new Error("getStorageData-error"));
 			} else {
 				const data: pl.StorageData[] = [{
