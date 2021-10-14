@@ -1,7 +1,7 @@
 import * as amf from "@akashic/amflow";
 import * as pl from "@akashic/playlog";
 import { MemoryAmflowClient, _cloneDeep } from "../../lib/MemoryAmflowClient";
-import { EventPriority } from "./helpers/src/MockAmflow";
+import { EventPriority } from "./helpers/src/MockAMFlow";
 
 describe("MemoryAmflowClient", () => {
 

@@ -11,6 +11,7 @@
 |:---------------------|:------------------------------------------------------|:----------------------------------------------|
 | `MemoryAMFlowClient` | tick データをオンメモリに保持する AMFlow 実装         | `@akashic/amflow-util/lib/MemoryAMFlowClient` |
 | `ReplayAMFlowProxy`  | 与えられた playlog データをそのまま返す AMFlow 実装。<br/>ただし、与えられた範囲外のデータは別の AMFlow インスタンスに問い合わせる| `@akashic/amflow-util/lib/ReplayAmflowProxy` |
+| `PromisifiedAMFlowProxy` | 引数に渡された AMFlow 実装の非同期関数を Promise でラップしたクラス。 | `@akashic/amflow-util/lib/PromisifiedAMFlowProxy` |
 
 このモジュールは利用が限られるため、root からの import/require はできませんので個別に import/require する必要があります。
 

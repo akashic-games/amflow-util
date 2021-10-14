@@ -1,11 +1,11 @@
 import * as amf from "@akashic/amflow";
 import * as pl from "@akashic/playlog";
 import { ReplayAmflowProxy } from "../../lib/ReplayAmflowProxy";
-import { EventPriority, MockAmflow } from "./helpers/src/MockAmflow";
+import { EventPriority, MockAMFlow } from "./helpers/src/MockAMFlow";
 
 describe("ReplayAmflowProxy", () => {
 	it("can be instantiated", () => {
-		const amflow = new MockAmflow();
+		const amflow = new MockAMFlow();
 		const self = new ReplayAmflowProxy({
 			amflow: amflow,
 			tickList: [0, 10, []],
@@ -19,7 +19,7 @@ describe("ReplayAmflowProxy", () => {
 
 	describe("#dropAfter", () => {
 		it("does nothing when dropping after the given tikcs", () => {
-			const amflow = new MockAmflow();
+			const amflow = new MockAMFlow();
 			const self = new ReplayAmflowProxy({
 				amflow: amflow,
 				tickList: [0, 10, []],
@@ -32,7 +32,7 @@ describe("ReplayAmflowProxy", () => {
 		});
 
 		it("drop anything when dropping before the given tikcs", () => {
-			const amflow = new MockAmflow();
+			const amflow = new MockAMFlow();
 			const self = new ReplayAmflowProxy({
 				amflow: amflow,
 				tickList: [0, 10, []],
@@ -49,7 +49,7 @@ describe("ReplayAmflowProxy", () => {
 		});
 
 		it("slices the given tikcs", () => {
-			const amflow = new MockAmflow();
+			const amflow = new MockAMFlow();
 			const self = new ReplayAmflowProxy({
 				amflow: amflow,
 				tickList: [0, 10, []],
@@ -77,7 +77,7 @@ describe("ReplayAmflowProxy", () => {
 			10                      // 5: Y座標
 		];
 
-		const amflow = new MockAmflow();
+		const amflow = new MockAMFlow();
 		const self = new ReplayAmflowProxy({
 			amflow: amflow,
 			tickList: [
@@ -236,7 +236,7 @@ describe("ReplayAmflowProxy", () => {
 
 	describe("#getStartPoint", () => {
 		it("bypasses the original", (done: any) => {
-			const amflow = new MockAmflow();
+			const amflow = new MockAMFlow();
 			const sp6 = { frame: 6, timestamp: 500, data: { content: "dataFor6" } };
 			const sp18 = { frame: 18, timestamp: 900, data: { content: "dataFor18" } };
 			const self = new ReplayAmflowProxy({
@@ -253,7 +253,7 @@ describe("ReplayAmflowProxy", () => {
 		});
 
 		it("compares the result with the original", (done: any) => {
-			const amflow = new MockAmflow();
+			const amflow = new MockAMFlow();
 			const sp6 = { frame: 6, timestamp: 1000, data: { content: "dataFor6" } };
 			const sp18 = { frame: 18, timestamp: 2000, data: { content: "dataFor18" } };
 			const self = new ReplayAmflowProxy({
