@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased changes
+## 1.2.0
 * playlogの終了時間を算出する `calculateFinishedTime()` 関数を追加
 
 ## 1.1.0
