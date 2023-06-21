@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.3.0
+* `@akashic/amflow` と `@akashic/playlog` の minor 更新に伴うバージョンアップ
+
 ## 1.2.0
 * playlogの終了時間を算出する `calculateFinishedTime()` 関数を追加
 
