@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.4.0
+* `@akashic/amflow` と `@akashic/playlog` の minor 更新に伴うバージョンアップ
+
 ## 1.3.0
 * `@akashic/amflow` と `@akashic/playlog` の minor 更新に伴うバージョンアップ
 
