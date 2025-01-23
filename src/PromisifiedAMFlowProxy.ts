@@ -1,6 +1,6 @@
-import { AMFlow, GetStartPointOptions, GetTickListOptions, Permission, StartPoint } from "@akashic/amflow";
-import * as playlog from "@akashic/playlog";
-import { PromisifiedAMFlow } from "./PromisifiedAMFlow";
+import type { AMFlow, GetStartPointOptions, GetTickListOptions, Permission, StartPoint } from "@akashic/amflow";
+import type * as playlog from "@akashic/playlog";
+import type { PromisifiedAMFlow } from "./PromisifiedAMFlow";
 
 /**
  * 引数に渡された AMFlow 実装の非同期関数を Promise でラップしたクラス

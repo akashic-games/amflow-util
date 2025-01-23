@@ -1,4 +1,4 @@
-import * as amf from "@akashic/amflow";
+import type * as amf from "@akashic/amflow";
 import * as pl from "@akashic/playlog";
 
 export interface ReplayAmflowProxyParameterObject {
@@ -142,12 +142,12 @@ export class ReplayAmflowProxy implements amf.AMFlow {
 							callback(null, [from, to, ticksWithEvents]);
 						}
 					} else if (fromInGiven) { // 前半重複
-						let ticksWithEvents = this._sliceTicks(givenTicksWithEvents, from, to)
+						const ticksWithEvents = this._sliceTicks(givenTicksWithEvents, from, to)
 							.concat(tickList[pl.TickListIndex.Ticks] || []);
 						callback(null, [from, tickList[pl.TickListIndex.To], ticksWithEvents]);
 
 					} else { // 後半重複
-						let ticksWithEvents = (tickList[pl.TickListIndex.Ticks] || [])
+						const ticksWithEvents = (tickList[pl.TickListIndex.Ticks] || [])
 							.concat(this._sliceTicks(givenTicksWithEvents, from, to));
 						callback(null, [tickList[pl.TickListIndex.From], to, ticksWithEvents]);
 					}

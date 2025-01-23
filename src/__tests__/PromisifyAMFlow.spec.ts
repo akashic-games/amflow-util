@@ -1,4 +1,4 @@
-import * as pl from "@akashic/playlog";
+import type * as pl from "@akashic/playlog";
 import { PromisifiedAMFlowProxy } from "../../lib/PromisifiedAMFlowProxy";
 import { MockAMFlow } from "./helpers/src/MockAMFlow";
 
@@ -228,7 +228,7 @@ describe("PromisifyAMFlow", () => {
 		expect(mockAmflow.logs[0]).toBe("getStorageData");
 		expect(result).toEqual([{
 			readKey: { region: 0, regionKey: MockAMFlow.REGIONKEY_CALLS_CALLBACK_OF_STORAGEDATA},
-			 values: [{data: 1}]}
+			values: [{data: 1}]}
 		]);
 
 		let errMsg = "";

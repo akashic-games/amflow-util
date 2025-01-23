@@ -1,4 +1,4 @@
-import * as pl from "@akashic/playlog";
+import type * as pl from "@akashic/playlog";
 
 // 指定のplaylogのゲーム終了までの時間を算出する。時間の単位はミリ秒
 export function calculateFinishedTime(tickList: pl.TickList, fps: number, startTime: number = 0): number {
