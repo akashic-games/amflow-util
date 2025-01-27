@@ -1,4 +1,4 @@
-import * as amf from "@akashic/amflow";
+import type * as amf from "@akashic/amflow";
 import * as pl from "@akashic/playlog";
 import { ReplayAmflowProxy } from "../../lib/ReplayAmflowProxy";
 import { EventPriority, MockAMFlow } from "./helpers/src/MockAMFlow";

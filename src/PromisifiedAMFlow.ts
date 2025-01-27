@@ -1,5 +1,5 @@
-import { GetStartPointOptions, GetTickListOptions, Permission, StartPoint } from "@akashic/amflow";
-import * as playlog from "@akashic/playlog";
+import type { GetStartPointOptions, GetTickListOptions, Permission, StartPoint } from "@akashic/amflow";
+import type * as playlog from "@akashic/playlog";
 
 /**
  * AMFlow の非同期関数を Promise でラップした interface

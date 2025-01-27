@@ -1,5 +1,5 @@
-import { AMFlow, StartPoint, GetTickListOptions } from "@akashic/amflow";
-import * as pl from "@akashic/playlog";
+import type { AMFlow, StartPoint, GetTickListOptions } from "@akashic/amflow";
+import type * as pl from "@akashic/playlog";
 
 export const enum EventPriority {
 	Lowest = 0,
