@@ -9,21 +9,25 @@ env:
   NODE_VERSION: 18
   cache-version: v1
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
     name: Publish and Release
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@7c12f8017d5436eb855f1ed4399f037a36fbd9e8 # v2.5.2
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
         with:
           fetch-depth: 1
+          persist-credentials: false
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@8492260343ad570701412c2f464a5877dc76bace # v2
         env:
           cache-name: cache-node-modules
         with:
@@ -39,7 +43,7 @@ jobs:
           npm run build
           npm test
       - name: Publish and Release
-        uses: akashic-games/action-release@v1
+        uses: akashic-games/action-release@e4551406b903d7bd8a572931871251e34fa7d384 # v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           npm_token: ${{ secrets.NPM_TOKEN }}
