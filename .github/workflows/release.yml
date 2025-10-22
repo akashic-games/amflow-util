@@ -25,7 +25,6 @@ jobs:
         uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
         with:
           fetch-depth: 1
-          persist-credentials: false
       - name: Cache node modules
         uses: actions/cache@8492260343ad570701412c2f464a5877dc76bace # v2
         env:
