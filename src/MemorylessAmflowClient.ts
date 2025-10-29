@@ -17,11 +17,10 @@ export class MemorylessAmflowClient implements amf.AMFlow {
 	}
 
 	open(playId: string, callback?: (error: Error | null) => void): void {
-		if (!callback) return;
 		setTimeout(() => {
 			if (playId !== this._playId)
-				return void callback(new Error("MemorylessAmflowClient#open: unknown playId"));
-			callback(null);
+				return void callback?.(new Error("MemorylessAmflowClient#open: unknown playId"));
+			callback?.(null);
 		}, 0);
 	}
 
