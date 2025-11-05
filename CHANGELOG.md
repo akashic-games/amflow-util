@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## unreleased changes
+## 1.5.0
 * `MemorylessAmflowClient` を追加
 
 ## 1.4.0
