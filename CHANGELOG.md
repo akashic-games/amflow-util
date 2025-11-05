@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.5.0
+* `MemorylessAmflowClient` を追加
+
 ## 1.4.0
 * `@akashic/amflow` と `@akashic/playlog` の minor 更新に伴うバージョンアップ
 
