@@ -46,3 +46,4 @@ jobs:
         uses: akashic-games/action-release@e4e3c8901b8ed92356c5eb9cf6cfc573a9c4ce9b # v2.1.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          npm_token: "dummy" # dummy value to skip npm publish
